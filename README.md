@@ -22,6 +22,7 @@ Without a scalable preprocessing pipeline, organizations experience:
 **Delayed risk analysis**
 **Inconsistent results across teams**
 **Inability to scale analytics as data volume grows**
+
 ---
 
 ## Solution Overview
