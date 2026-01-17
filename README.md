@@ -1,100 +1,146 @@
 # Scalable Financial Market Risk Analytics Using Hadoop MapReduce
 
-## Executive Summary
+## Project Summary
 
-Financial institutions ingest massive volumes of high-frequency market data that must be processed efficiently to support risk monitoring, infrastructure planning, and market analysis.
+This project demonstrates how large-scale raw stock market data can be transformed into analytics-ready financial datasets using a Hadoop MapReduce pipeline.
+The system ingests 7,195 raw stock files, normalizes historical OHLCV data, computes daily returns, and produces consolidated datasets in HDFS that support downstream risk and volatility analysis.
 
-This project demonstrates how Hadoop MapReduce can be used to transform raw, high-volume stock exchange data (10GB+) into structured, analytics-ready datasets that enable:
-- Market risk quantification
-- Identification of high-volatility periods
-- Operational capacity planning for trading systems
+The project highlights scalable data engineering, fault-tolerant batch processing, and financial data preprocessing at scale, solving a core bottleneck faced by financial analytics teams.
 
-The solution showcases scalable data engineering, statistical analysis, and business-focused insights derived from big data.
+---
 
 ## Business Problem
 
-Stock exchanges and financial institutions face three key challenges:
+Financial institutions and analytics teams face major challenges when working with historical market data:
 
-1. **Volume** – Multi-gigabyte, high-frequency time-series data that cannot be processed efficiently on a single machine.
-2. **Velocity** – Rapid data generation requiring scalable batch processing.
-3. **Decision Latency** – Raw data is unusable for risk analysis without aggregation and transformation.
+**Fragmentation**: Market data is split across thousands of per-stock files
+**Scale**: Multi-gigabyte datasets cannot be efficiently processed on a single machine
+**Unusable Raw Data**: Raw prices cannot directly support risk metrics like returns or volatility
+**High Data Preparation Cost**: Most analysis time is spent cleaning and restructuring data
 
-Without scalable processing pipelines, organizations risk:
-- Delayed risk detection
-- Poor infrastructure capacity planning
-- Missed insights during volatile market events
+Without a scalable preprocessing pipeline, organizations experience:
+
+**Delayed risk analysis**
+**Inconsistent results across teams**
+**Inability to scale analytics as data volume grows**
+---
 
 ## Solution Overview
 
-A custom Hadoop MapReduce pipeline was implemented to process raw stock exchange data and generate clean, aggregated time-series outputs.
+A two-stage Hadoop MapReduce pipeline was implemented to transform raw stock data into structured, analytics-ready datasets.
 
-The pipeline:
-- Parses and cleans raw transaction-level data
-- Aggregates price and transaction counts per time interval
-- Produces analytics-ready datasets suitable for downstream statistical analysis and visualization
+The solution:
+- Normalizes raw stock price files into a unified OHLCV format
+- Computes daily returns per stock using distributed processing
+- Stores results in HDFS for scalable access and analysis
 
-The final dataset enables rapid analysis of volatility, trading patterns, and operational load characteristics.
+This enables efficient downstream financial analysis such as:
+
+- Volatility estimation
+- Risk modeling
+- Time-series trend analysis
+---
 
 ## Architecture & Data Flow
 
-Raw Stock Data (10GB+)
+Raw Stock Files (7,195 files)
         ↓
-Hadoop HDFS
+HDFS (/market_data/raw/stocks)
         ↓
-Mapper: Parse & Extract (timestamp, price)
+MapReduce Job 1: Preprocessing
+  - Parse raw text files
+  - Normalize OHLCV records
         ↓
-Reducer: Aggregate (total price, count, average)
+HDFS (/market_data/processed/normalized)
         ↓
-Clean Time-Series Dataset
+MapReduce Job 2: Returns Calculation
+  - Compute daily percentage returns
         ↓
-Python Analytics & Visualization
+HDFS (/market_data/processed/returns)
+        ↓
+Python Analytics / Visualization
+---
 
 ## Technology Stack
 
-- **Big Data Framework:** Apache Hadoop MapReduce
-- **Programming Language:** Python (Streaming API for Mapper & Reducer)
-- **Analytics & Visualization:** Python (Pandas, Matplotlib, Seaborn)
-- **Environment:** Single-node Hadoop cluster (Local / Cloud VM)
+- **Big Data Framework:** AApache Hadoop (HDFS + MapReduce), Hadoop Streaming API
+- **Programming Language:** Python (Mapper & Reducer logic)
+- **Analytics & Visualization:** Pandas (data analysis), Matplotlib / Seaborn (visualization)
+- **Environment:** Single-node Hadoop cluster, Windows OS, Local MapReduce execution mode, Python virtual environment
+---
 
 ## Analytical Outputs
 
-The MapReduce pipeline reduced raw multi-gigabyte input data to **8,072 clean aggregated records**, enabling fast downstream analysis.
+Normalized Dataset
 
-Key derived metrics include:
-- Average price per time interval
-- Trading activity volume
-- Rolling volatility measures
+- Clean OHLCV time-series data
+- Consolidated into a single distributed output
+- Size: ~822 MB
+- Stored in HDFS (part-00000)
+
+Returns Dataset
+
+- Daily percentage returns per stock
+- Size: ~632 MB
+- Enables volatility and trend analysis
+---
 
 ## Business Insights & Decision Support
 
-### 1. Market Risk Monitoring
-30-day rolling volatility analysis highlights periods of extreme market instability, often aligned with macroeconomic or external events.
-**Decision enabled:** Risk teams can increase monitoring or adjust exposure during high-volatility periods.
+### 1.Risk Analysis Enablement
+Daily returns provide the foundation for:
+- Volatility modeling
+- Value-at-Risk (VaR)
+- Stress testing\
+**Decision enabled:** Risk teams can immediately apply quantitative models without manual preprocessing.
 
-### 2. Infrastructure & Capacity Planning
-Trading activity patterns by day-of-week reveal consistent peak loads (Mon–Fri).
-**Decision enabled:** Infrastructure teams can allocate compute resources more efficiently during high-traffic windows.
+### 2. Scalability Validation
+- Successfully processed 7,195 input files using distributed execution
+- Demonstrates how financial analytics pipelines scale beyond single-machine limits
+**Decision enabled:** Justifies distributed infrastructure investment for historical analysis.
 
-### 3. Big Data Value Demonstration
-The project demonstrates how MapReduce enables massive data reduction while preserving critical analytical signals.
-**Decision enabled:** Justifies investment in distributed data processing infrastructure.
+### 3. Operational Efficiency
+- Automated data normalization eliminates manual data cleaning
+- Reduces analyst preparation time significantly**Decision enabled:** Justifies investment in distributed data processing infrastructure.
+**Decision enabled**: Analysts focus on insights instead of data wrangling.
+
+---
 
 ## Design Decisions & Trade-offs
 
-- **Why MapReduce:** Chosen for scalability and fault tolerance when processing large batch datasets.
-- **Why Batch Processing:** Suitable for historical risk analysis; real-time streaming would require a different architecture (e.g., Spark/Kafka).
-- **Single-Node Cluster:** Used for cost and development simplicity; architecture is horizontally scalable.
+- **Why MapReduce:** Works well for batch processing at scale and is fault-tolerant for large historical datasets.
+- **Why Streaming + Python:** Allowed rapid development of custom parsing/logic while still leveraging Hadoop execution.
+- **Batch-first design:** Optimized for historical risk analysis; real-time monitoring would require streaming architecture.
+
+---
+
 
 ## Limitations & Future Improvements
 
-- Extend to multi-node Hadoop or Spark for improved performance
-- Introduce streaming ingestion for near real-time risk monitoring
-- Integrate cloud-native storage and orchestration (e.g., AWS S3, EMR)
-- Add anomaly detection for automated risk alerts
+- **Single-node environment:** Scalable design, but runtime can improve with a multi-node cluster.
+- **Batch-only:** Extend to near real-time processing with Kafka/Spark Streaming.
+- Rolling volatility and risk metrics (e.g., moving-window volatility)
+- Anomaly detection for extreme return spikes
+- Cloud storage + orchestration (S3/EMR, Databricks, Airflow)
+
+---
 
 ## Repository Structure
 
-- `mapper.py` – Parses raw stock data and emits (time_key, price, count)
-- `reducer.py` – Aggregates total price, transaction count, and average price
-- `visualizations.ipynb` – Statistical analysis and visualizations built on MapReduce outputs
+```graphql
+Scalable-Financial-Risk-Analytics/
+├─ data/
+│  ├─ raw/                      # (optional) sample raw inputs / references
+│  ├─ combined/                 # merged input files (e.g., stocks_all.csv)
+│  ├─ processed/                # local processed outputs (optional)
+│  └─ sample/                   # small sample dataset for quick tests
+├─ src/
+│  └─ analytics/
+│     ├─ preprocess_mapper.py   # MapReduce #1 mapper (normalize OHLCV)
+│     ├─ preprocess_reducer.py  # MapReduce #1 reducer
+│     ├─ returns_mapper.py      # MapReduce #2 mapper (compute returns)
+│     └─ returns_reducer.py     # MapReduce #2 reducer
+├─ notebooks/                   # analysis + plots (optional)
+├─ README.md
+└─ requirements.txt             # python deps (if used)
 
