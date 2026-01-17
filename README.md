@@ -4,7 +4,6 @@
 
 This project demonstrates how large-scale raw stock market data can be transformed into analytics-ready financial datasets using a Hadoop MapReduce pipeline.
 The system ingests 7,195 raw stock files, normalizes historical OHLCV data, computes daily returns, and produces consolidated datasets in HDFS that support downstream risk and volatility analysis.
-
 The project highlights scalable data engineering, fault-tolerant batch processing, and financial data preprocessing at scale, solving a core bottleneck faced by financial analytics teams.
 
 ---
