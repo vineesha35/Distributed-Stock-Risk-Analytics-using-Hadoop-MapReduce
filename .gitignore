@@ -1,22 +1,16 @@
+﻿# Big datasets / outputs
+data/combined/
+*.csv
+*.parquet
+*.zip
+
+# Hadoop / temp / logs
+hadoop_data/
+logs/
+tmp/
+hs_err_pid*.log
+
 # Python
 .venv/
 __pycache__/
-*.pyc
-
-# Data outputs
-data/*.csv
-data/*.parquet
-data/*.zip
-
-# Hadoop / temp
-hs_err_pid*.log
-*.log
-/tmp/
-temp/
-
-# Jupyter
 .ipynb_checkpoints/
-
-# OS
-.DS_Store
-Thumbs.db
