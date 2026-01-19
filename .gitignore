@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Data outputs
+data/*.csv
+data/*.parquet
+data/*.zip
+
+# Hadoop / temp
+hs_err_pid*.log
+*.log
+/tmp/
+temp/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
